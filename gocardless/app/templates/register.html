@@ -1,147 +1,179 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Registration</title>
-    </head>
-    <body>
-        <h2>User Registration Form</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="id_first_name">First Name:</label><br>
-            <input type="text" id="id_first_name" name="first_name"
-                required><br><br>
-
-            <label for="id_last_name">Last Name:</label><br>
-            <input type="text" id="id_last_name" name="last_name"
-                required><br><br>
-
-            <label for="id_email">Email:</label><br>
-            <input type="email" id="id_email" name="email" required><br><br>
-            <label for="id_password">Password:</label><br>
-            <input type="password" id="id_password" name="password"
-                required><br><br>
-
-            <label for="id_contact">Contact:</label><br>
-            <input type="text" id="id_contact" name="contact" required><br><br>
-
-            <label for="id_age">Age:</label><br>
-            <input type="number" id="id_age" name="age" required><br><br>
-
-            
-            <label for="id_image">Upload Image:</label><br>
-            <input type="file" id="id_image" name="image" accept="image/*"
-                required><br><br>
-
-            <button type="submit">Submit</button>
-        </form>
-    </body>
-</html> -->
-
 {% load static %}
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>User Registration</title>
-        <!-- <link rel="icon" href="Images\farmcare_logo.png" sizes="32x32" /> -->
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
-            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-            crossorigin="anonymous">
-    </head>
 
-    <body>
-        <div class="main container">
-           
+<head>
+    <meta charset="utf-8">
+    <title>User Registration</title>
+    <!-- <link rel="icon" href="Images\farmcare_logo.png" sizes="32x32" /> -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 
-            <br><br />
-            {% if messages %}
-            <div class="alert alert-primary" role="alert">
-                {% for message in messages %}
-                {{message}}
-                {% endfor %}
-            </div>
-            {% endif %}
-            <form class="shadow-lg p-5 rounded" method='POST'  enctype="multipart/form-data">
-                {% csrf_token %}
-                <h1> Register </h1>
-                <hr>
-                <h3>Basic Info</h3>
-                <div class="form-group">
-                    <label for="first_name">First Name</label>
-                    <input type="text" class="form-control" name="first_name"
-                        placeholder="Enter First Name" required>
-                </div>
-                <div class="form-group">
-                    <label for="last_name">Last Name</label>
-                    <input type="text" class="form-control" name="last_name"
-                        placeholder="Enter Last Name" required>
-                </div>
-                <div class="form-group">
-                    <label for="id_contact">Contact</label>
-                    <input type="text" class="form-control" name="contact"
-                        id="id_contact" required
-                        placeholder="Enter contact">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+    body {
+        font-family: Roboto;
+        display: flex;
+        justify-content: center;
+        background-color: rgb(255, 255, 255);
+        align-items: center;
+        /* background: linrgb(255, 255, 255),  #738026, rgb(7, 37, 108)); */
+    }
 
-                </div>
-                <div class="form-group">
-                    <label for="id_age">Age</label>
-                    <input type="number" class="form-control" name="age"
-                        id="id_age" required
-                        placeholder="Enter age">
+    .main_container {
+        width: 80%;
+    }
 
-                </div>
-          
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input type="email" class="form-control" name="email"
-                        id="email" required
-                        aria-describedby="emailHelp" placeholder="Enter email">
 
-                </div>
-             
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control"
-                        id="exampleInputPassword1" required name="password"
-                        placeholder="Password">
-                    <small class="form-text text-muted">We'll never share your
-                        password with anyone else.</small>
-                </div>
+    .main {}
 
-                <div class="mb-3">
-                    <label for="formFile" class="form-label">Upload Photo</label>
-                    <input class="form-control" type="file" id="image">
-                </div>
-                <h3>Account Details</h3>
-                <div class="form-group">
-                    <label for="id_bank_name">Bank Name</label>
-                    <input type="text" class="form-control" name="bank_name"
-                        id="id_bank_name" required
-                        placeholder="Enter Bank Name">
+    .classes_info {
+        background-color: #000;
+        height: 100px;
+    }
 
-                </div>
-                <div class="form-group">
-                    <label for="id_account_number">Account Number</label>
-                    <input type="number" class="form-control" name="account_number"
-                        id="id_account_number" required
-                        placeholder="Enter Account Number">
+    .headings_div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 30px;
+    }
 
-                </div>
-                <div class="form-group">
-                    <label for="id_routing_number">Routing Number</label>
-                    <input type="number" class="form-control" name="routing_number"
-                        id="id_routing_number" required
-                        placeholder="Enter Routing Number">
 
-                </div>
-                <p> Already have an account . <a href="{% url='login_page'% }">Login</a></p>
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
+    h3 {
+        background-color: rgb(255, 158, 106);
+        padding: 5px 10px;
+        color: white;
+        font-weight: bold;
+        border-radius: 5px;
+        align-items: center;
+        align-self: center;
+    }
 
+    .bts {
+        background-color: white;
+        color: rgb(255, 158, 106);
+        font-weight: bold;
+        border: 2px solid rgb(255, 158, 106);
+
+    }
+
+    .bts:hover {
+
+        color: white;
+        background-color: rgb(255, 158, 106);
+    }
+
+    .eye_icon {
+        height: 20px;
+        width: 20px;
+        cursor: pointer;
+
+    }
+</style>
+<body>
+    <div class="main_container">
+        <br><br />
+        {% if messages %}
+        <div class="alert alert-primary" role="alert">
+            {% for message in messages %}
+            {{message}}
+            {% endfor %}
         </div>
-    </body>
+        {% endif %}
+        <form class="shadow-lg p-5 rounded" method='POST' enctype="multipart/form-data">
+            {% csrf_token %}
+            <h1> Register </h1>
+            <hr>
+            <div class="headings_div">
+                <h3>Basic Info</h3>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" class="form-control" name="first_name" placeholder="Enter First Name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" class="form-control" name="last_name" placeholder="Enter Last Name" required>
+            </div>
+            <div class="form-group">
+                <label for="id_contact">Contact</label>
+                <input type="text" class="form-control" name="contact" id="id_contact" required
+                    placeholder="Enter contact">
+
+            </div>
+            <div class="form-group">
+                <label for="id_age">Age</label>
+                <input type="number" class="form-control" name="age" id="id_age" required placeholder="Enter age">
+            </div>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" name="email" id="email" required aria-describedby="emailHelp"
+                    placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" id="exampleInputPassword1" required name="password"
+                        style="padding-right: 30px;" placeholder="Password">
+                    <span onclick="togglePassword()"
+                        style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%);">
+                        <img src="{% static 'icons/eye-slash-solid.svg' %}"
+                            style="height: 20px; width: 20px; cursor: pointer;" alt="Show" id="eye_icon" />
+                    </span>
+                </div>
+                <small class="form-text text-muted">We'll never share your
+                    password with anyone else.</small>
+            </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Upload Photo</label>
+                <input class="form-control" type="file" id="image">
+            </div>
+            <div class="headings_div">
+                <h3>Account Details</h3>
+            </div>
+            <div class="form-group">
+                <label for="id_bank_name">Bank Name</label>
+                <input type="text" class="form-control" name="bank_name" id="id_bank_name" required
+                    placeholder="Enter Bank Name">
+
+            </div>
+            <div class="form-group">
+                <label for="id_account_number">Account Number</label>
+                <input type="number" class="form-control" name="account_number" id="id_account_number" required
+                    placeholder="Enter Account Number">
+
+            </div>
+            <div class="form-group">
+                <label for="id_routing_number">Routing Number</label>
+                <input type="number" class="form-control" name="routing_number" id="id_routing_number" required
+                    placeholder="Enter Routing Number">
+
+            </div>
+            <p> Already have an account . <a href="{% url 'login_page' %}" >Login</a> </p>
+            <button type="submit" class="btn  bts">Register</button>
+        </form>
+    </div>
+
+    </div>
+</body>
+<script>
+    function togglePassword() {
+        var passwordField = document.getElementById("exampleInputPassword1");
+        var eyeIcon = document.getElementById("eye_icon");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.src = "{% static 'icons/eye-solid.svg' %}"; // Change the eye icon to a slash
+        } else {
+            passwordField.type = "password";
+            eyeIcon.src = "{% static 'icons/eye-slash-solid.svg' %}"; // Change the eye icon back to normal
+        }
+    }
+</script>
+
 </html>

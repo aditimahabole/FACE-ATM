@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.text import slugify
+import re
 
 class Person(AbstractUser):
     age = models.PositiveIntegerField(blank=True, null=True)
@@ -10,6 +12,22 @@ class Person(AbstractUser):
 
     def __str__(self):
         return self.username
+    def save(self, *args, **kwargs):
+        # Generate username based on email, last 4 digits of contact, and first name
+        if not self.username:
+            email_username = self.email.split('@')[0]  # Get string before '@' in email
+            last_four_digits = re.search(r'\d{4}$', self.contact).group()  # Get last 4 digits of contact
+            first_name_slug = slugify(self.first_name)  # Convert first name to a slug
+            # Concatenate the above values to create a unique username
+            username = f"{email_username}_{last_four_digits}_{first_name_slug}"
+            # Ensure username is unique by appending numbers if necessary
+            base_username = username
+            counter = 1
+            while Person.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+            self.username = username
+        super().save(*args, **kwargs)
     
 class BankDetails(models.Model):
     user = models.OneToOneField(Person, on_delete=models.CASCADE)
