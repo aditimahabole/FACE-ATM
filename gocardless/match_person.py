@@ -9,7 +9,6 @@ from datetime import datetime
 def match_person():
     
     df_known_faces = pd.read_excel('known_faces.xlsx')
-
     # -------- Extract face encodings and names from the DataFrame ----------
     known_face_encodings = [np.fromstring(encoding.strip('[]'), dtype=float, sep=' ') 
                             for encoding in df_known_faces['Face Encoding']]

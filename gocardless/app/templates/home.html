@@ -1,420 +1,399 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FaceFair</title>
-        <link rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    </head>
-    <style>
-    body 
-    {
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceFair</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+ :root{
+    --dark-red:#FC726E;
+    --skin:#FEB9B7;
+    --dark-brown:#A05B59;
+    --double-db:#7E3937;
+
+ }
+    .card {
         font-family: Roboto;
+        --main-color: #000;
+        --submain-color: #78858F;
+        --bg-color: #fff;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        position: relative;
+        width: 300px;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 5px;
+        background: var(--bg-color);
+        background-color: var(--skin);
     }
-.card {
-    --main-color: #000;
-    --submain-color: #78858F;
-    --bg-color: #fff;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    position: relative;
-    width: 300px;
-    height: 384px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 20px;
-    background: var(--bg-color);
-  }
-  
-  .card__img {
-    height: 192px;
-    width: 100%;
-  }
-  
-  .card__img svg {
-    height: 100%;
-    border-radius: 20px 20px 0 0;
-  }
-  
-  .card__avatar {
-    position: absolute;
-    width: 114px;
-    height: 114px;
-    background: var(--bg-color);
-    border-radius: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: calc(50% - 57px);
-  }
-  
-  .card__avatar svg {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .card__title {
-    margin-top: 60px;
-    font-weight: 500;
-    font-size: 18px;
-    color: var(--main-color);
-  }
-  
-  .card__subtitle {
-    margin-top: 10px;
-    font-weight: 400;
-    font-size: 15px;
-    color: var(--submain-color);
-  }
-  
-  .card__btn {
-    margin-top: 15px;
-    width: 76px;
-    height: 31px;
-    border: 2px solid var(--main-color);
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 11px;
-    color: var(--main-color);
-    background: var(--bg-color);
-    text-transform: uppercase;
-    transition: all 0.3s;
-  }
-  
-  .card__btn-solid {
-    background: var(--main-color);
-    color: var(--bg-color);
-  }
-  
-  .card__btn:hover {
-    background: var(--main-color);
-    color: var(--bg-color);
-  }
-  
-  .card__btn-solid:hover {
-    background: var(--bg-color);
-    color: var(--main-color);
-  }
-  .profile_div
-  {
+
+    .card__img {
+        font-family: Roboto;
+        
+        width: 100%;
+
+    }
+
+    .card__img svg {
+
+        height: 50%;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .card__avatar {
+        font-family: Roboto;
+        position: absolute;
+        width: 114px;
+        height: 114px;
+        background: var(--bg-color);
+        border-radius: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 20px;
+        background-color: var(--dark-red);
+        border: 3px solid var(--double-db);
+
+    }
+
+    .card__avatar svg {
+        width: 100px;
+        height: 100px;
+    }
+
+    .card__title {
+        font-family: Roboto;
+        font-weight: 800;
+        font-size: 18px;
+        color: var(--double-db);
+        font-family: Roboto;
+        
+    }
+
+    .card__subtitle {
+        font-family: Roboto;
+      
+        font-weight: 500;
+        font-size: 13px;
+    }
+    .current_balance_div{
+        color: #7E3937;
+    }
     
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
-  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
-  body {
-      font-family: Roboto;
-      display: flex;
-      justify-content: center;
-      background-color: rgb(255, 255, 255);
-      align-items: center;
+   
 
-  }
+   
 
-  .main_container {
-      width: 80%;
-  }
+   
+
+    .card_details_div {
+        font-family: Roboto;
+        font-weight: 500;
+        padding: 5px 5px;
+        width: 90%;
+        color: var(--skin);
+        background-color: var(--dark-brown);
+        border-radius: 5px;
+        margin: 5px 10px;
+        display: flex;
+        justify-content: flex-start;
+        
+        flex-direction: column;
+
+    }
+    .title_span{
+        color: var(--skin);
+        font-weight: 600;
+    }
+
+    .profile_div {
+        font-family: Roboto;
+
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    body {
+        font-family: Roboto;
+        display: flex;
+        justify-content: center;
+        background-color: rgb(255, 255, 255);
+        align-items: center;
+
+    }
+
+    .main_container {
+        width: 80%;
+    }
 
 
-  .classes_info {
-      background-color: #000;
-      height: 100px;
-  }
+    .classes_info {
+        background-color: #000;
+        height: 100px;
+    }
 
-  .headings_div {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      margin-top: 30px;
-  }
+    .headings_div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        
+    }
 
 
-  h3 {
-      background-color: rgb(255, 158, 106);
-      padding: 5px 10px;
-      color: white;
-      font-weight: bold;
-      border-radius: 5px;
-      align-items: center;
-      align-self: center;
-  }
+    h3 {
+        background-color: rgb(255, 158, 106);
+        padding: 5px 10px;
+        color: white;
+        font-weight: bold;
+        border-radius: 5px;
+        align-items: center;
+        align-self: center;
+    }
 
-  .bts {
-      background-color: white;
-      color: rgb(255, 158, 106);
-      font-weight: bold;
-      border: 2px solid rgb(255, 158, 106);
+    .bts {
+        background-color: white;
+        color: rgb(255, 158, 106);
+        font-weight: bold;
+        border: 2px solid rgb(255, 158, 106);
 
-  }
+    }
 
-  .bts:hover {
+    .bts:hover {
 
-      color: white;
-      background-color: rgb(255, 158, 106);
-  }
+        color: white;
+        background-color: rgb(255, 158, 106);
+    }
 
-  .eye_icon {
-      height: 20px;
-      width: 20px;
-      cursor: pointer;
+    .eye_icon {
+        height: 20px;
+        width: 20px;
+        cursor: pointer;
 
-  }
-  option:hover{
-    background-color: rgb(255, 158, 106);
+    }
 
-  }
+    option:hover {
+        background-color: rgb(255, 158, 106);
+
+    }
 </style>
 
-    <body>
-        <div class="profile_div">
-            <div class="card">
-                <div class="card__img"><svg xmlns="http://www.w3.org/2000/svg"
-                        width="100%"><rect fill="#ffffff" width="540"
-                            height="450"></rect><defs><lineargradient id="a"
-                                gradientUnits="userSpaceOnUse" x1="0" x2="0"
-                                y1="0" y2="100%"
-                                gradientTransform="rotate(222,648,379)"><stop
-                                    offset="0" stop-color="#ffffff"></stop><stop
-                                    offset="1"
-                                    stop-color="#FC726E"></stop></lineargradient><pattern
-                                patternUnits="userSpaceOnUse" id="b" width="300"
-                                height="250" x="0" y="0"
-                                viewBox="0 0 1080 900"><g
-                                    fill-opacity="0.5"><polygon fill="#444"
-                                        points="90 150 0 300 180 300"></polygon><polygon
-                                        points="90 150 180 0 0 0"></polygon><polygon
-                                        fill="#AAA"
-                                        points="270 150 360 0 180 0"></polygon><polygon
-                                        fill="#DDD"
-                                        points="450 150 360 300 540 300"></polygon><polygon
-                                        fill="#999"
-                                        points="450 150 540 0 360 0"></polygon><polygon
-                                        points="630 150 540 300 720 300"></polygon><polygon
-                                        fill="#DDD"
-                                        points="630 150 720 0 540 0"></polygon><polygon
-                                        fill="#444"
-                                        points="810 150 720 300 900 300"></polygon><polygon
-                                        fill="#FFF"
-                                        points="810 150 900 0 720 0"></polygon><polygon
-                                        fill="#DDD"
-                                        points="990 150 900 300 1080 300"></polygon><polygon
-                                        fill="#444"
-                                        points="990 150 1080 0 900 0"></polygon><polygon
-                                        fill="#DDD"
-                                        points="90 450 0 600 180 600"></polygon><polygon
-                                        points="90 450 180 300 0 300"></polygon><polygon
-                                        fill="#666"
-                                        points="270 450 180 600 360 600"></polygon><polygon
-                                        fill="#AAA"
-                                        points="270 450 360 300 180 300"></polygon><polygon
-                                        fill="#DDD"
-                                        points="450 450 360 600 540 600"></polygon><polygon
-                                        fill="#999"
-                                        points="450 450 540 300 360 300"></polygon><polygon
-                                        fill="#999"
-                                        points="630 450 540 600 720 600"></polygon><polygon
-                                        fill="#FFF"
-                                        points="630 450 720 300 540 300"></polygon><polygon
-                                        points="810 450 720 600 900 600"></polygon><polygon
-                                        fill="#DDD"
-                                        points="810 450 900 300 720 300"></polygon><polygon
-                                        fill="#AAA"
-                                        points="990 450 900 600 1080 600"></polygon><polygon
-                                        fill="#444"
-                                        points="990 450 1080 300 900 300"></polygon><polygon
-                                        fill="#222"
-                                        points="90 750 0 900 180 900"></polygon><polygon
-                                        points="270 750 180 900 360 900"></polygon><polygon
-                                        fill="#DDD"
-                                        points="270 750 360 600 180 600"></polygon><polygon
-                                        points="450 750 540 600 360 600"></polygon><polygon
-                                        points="630 750 540 900 720 900"></polygon><polygon
-                                        fill="#444"
-                                        points="630 750 720 600 540 600"></polygon><polygon
-                                        fill="#AAA"
-                                        points="810 750 720 900 900 900"></polygon><polygon
-                                        fill="#666"
-                                        points="810 750 900 600 720 600"></polygon><polygon
-                                        fill="#999"
-                                        points="990 750 900 900 1080 900"></polygon><polygon
-                                        fill="#999"
-                                        points="180 0 90 150 270 150"></polygon><polygon
-                                        fill="#444"
-                                        points="360 0 270 150 450 150"></polygon><polygon
-                                        fill="#FFF"
-                                        points="540 0 450 150 630 150"></polygon><polygon
-                                        points="900 0 810 150 990 150"></polygon><polygon
-                                        fill="#222"
-                                        points="0 300 -90 450 90 450"></polygon><polygon
-                                        fill="#FFF"
-                                        points="0 300 90 150 -90 150"></polygon><polygon
-                                        fill="#FFF"
-                                        points="180 300 90 450 270 450"></polygon><polygon
-                                        fill="#666"
-                                        points="180 300 270 150 90 150"></polygon><polygon
-                                        fill="#222"
-                                        points="360 300 270 450 450 450"></polygon><polygon
-                                        fill="#FFF"
-                                        points="360 300 450 150 270 150"></polygon><polygon
-                                        fill="#444"
-                                        points="540 300 450 450 630 450"></polygon><polygon
-                                        fill="#222"
-                                        points="540 300 630 150 450 150"></polygon><polygon
-                                        fill="#AAA"
-                                        points="720 300 630 450 810 450"></polygon><polygon
-                                        fill="#666"
-                                        points="720 300 810 150 630 150"></polygon><polygon
-                                        fill="#FFF"
-                                        points="900 300 810 450 990 450"></polygon><polygon
-                                        fill="#999"
-                                        points="900 300 990 150 810 150"></polygon><polygon
-                                        points="0 600 -90 750 90 750"></polygon><polygon
-                                        fill="#666"
-                                        points="0 600 90 450 -90 450"></polygon><polygon
-                                        fill="#AAA"
-                                        points="180 600 90 750 270 750"></polygon><polygon
-                                        fill="#444"
-                                        points="180 600 270 450 90 450"></polygon><polygon
-                                        fill="#444"
-                                        points="360 600 270 750 450 750"></polygon><polygon
-                                        fill="#999"
-                                        points="360 600 450 450 270 450"></polygon><polygon
-                                        fill="#666"
-                                        points="540 600 630 450 450 450"></polygon><polygon
-                                        fill="#222"
-                                        points="720 600 630 750 810 750"></polygon><polygon
-                                        fill="#FFF"
-                                        points="900 600 810 750 990 750"></polygon><polygon
-                                        fill="#222"
-                                        points="900 600 990 450 810 450"></polygon><polygon
-                                        fill="#DDD"
-                                        points="0 900 90 750 -90 750"></polygon><polygon
-                                        fill="#444"
-                                        points="180 900 270 750 90 750"></polygon><polygon
-                                        fill="#FFF"
-                                        points="360 900 450 750 270 750"></polygon><polygon
-                                        fill="#AAA"
-                                        points="540 900 630 750 450 750"></polygon><polygon
-                                        fill="#FFF"
-                                        points="720 900 810 750 630 750"></polygon><polygon
-                                        fill="#222"
-                                        points="900 900 990 750 810 750"></polygon><polygon
-                                        fill="#222"
-                                        points="1080 300 990 450 1170 450"></polygon><polygon
-                                        fill="#FFF"
-                                        points="1080 300 1170 150 990 150"></polygon><polygon
-                                        points="1080 600 990 750 1170 750"></polygon><polygon
-                                        fill="#666"
-                                        points="1080 600 1170 450 990 450"></polygon><polygon
-                                        fill="#DDD"
-                                        points="1080 900 1170 750 990 750"></polygon></g></pattern></defs><rect
-                            x="0" y="0" fill="url(#a)" width="100%"
-                            height="100%"></rect><rect x="0" y="0"
-                            fill="url(#b)" width="100%"
-                            height="100%"></rect></svg></div>
-                <div class="card__avatar">
-                   <img src="">
-                        
-                </div>
+<body>
+    <div class="profile_div">
+        <div class="card">
+            <div class="card__img">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%">
+                    <rect fill="#ffffff" width="540" height="450"></rect>
+                    <defs>
+                        <lineargradient id="a" gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="0" y2="100%"
+                            gradientTransform="rotate(222,648,379)">
+                            <stop offset="0" stop-color="#ffffff"></stop>
+                            <stop offset="1" stop-color="#FC726E"></stop>
+                        </lineargradient>
+                        <pattern patternUnits="userSpaceOnUse" id="b" width="300" height="250" x="0" y="0"
+                            viewBox="0 0 1080 900">
+                            <g fill-opacity="0.5">
+                                <polygon fill="#444" points="90 150 0 300 180 300"></polygon>
+                                <polygon points="90 150 180 0 0 0"></polygon>
+                                <polygon fill="#AAA" points="270 150 360 0 180 0"></polygon>
+                                <polygon fill="#DDD" points="450 150 360 300 540 300"></polygon>
+                                <polygon fill="#999" points="450 150 540 0 360 0"></polygon>
+                                <polygon points="630 150 540 300 720 300"></polygon>
+                                <polygon fill="#DDD" points="630 150 720 0 540 0"></polygon>
+                                <polygon fill="#444" points="810 150 720 300 900 300"></polygon>
+                                <polygon fill="#FFF" points="810 150 900 0 720 0"></polygon>
+                                <polygon fill="#DDD" points="990 150 900 300 1080 300"></polygon>
+                                <polygon fill="#444" points="990 150 1080 0 900 0"></polygon>
+                                <polygon fill="#DDD" points="90 450 0 600 180 600"></polygon>
+                                <polygon points="90 450 180 300 0 300"></polygon>
+                                <polygon fill="#666" points="270 450 180 600 360 600"></polygon>
+                                <polygon fill="#AAA" points="270 450 360 300 180 300"></polygon>
+                                <polygon fill="#DDD" points="450 450 360 600 540 600"></polygon>
+                                <polygon fill="#999" points="450 450 540 300 360 300"></polygon>
+                                <polygon fill="#999" points="630 450 540 600 720 600"></polygon>
+                                <polygon fill="#FFF" points="630 450 720 300 540 300"></polygon>
+                                <polygon points="810 450 720 600 900 600"></polygon>
+                                <polygon fill="#DDD" points="810 450 900 300 720 300"></polygon>
+                                <polygon fill="#AAA" points="990 450 900 600 1080 600"></polygon>
+                                <polygon fill="#444" points="990 450 1080 300 900 300"></polygon>
+                                <polygon fill="#222" points="90 750 0 900 180 900"></polygon>
+                                <polygon points="270 750 180 900 360 900"></polygon>
+                                <polygon fill="#DDD" points="270 750 360 600 180 600"></polygon>
+                                <polygon points="450 750 540 600 360 600"></polygon>
+                                <polygon points="630 750 540 900 720 900"></polygon>
+                                <polygon fill="#444" points="630 750 720 600 540 600"></polygon>
+                                <polygon fill="#AAA" points="810 750 720 900 900 900"></polygon>
+                                <polygon fill="#666" points="810 750 900 600 720 600"></polygon>
+                                <polygon fill="#999" points="990 750 900 900 1080 900"></polygon>
+                                <polygon fill="#999" points="180 0 90 150 270 150"></polygon>
+                                <polygon fill="#444" points="360 0 270 150 450 150"></polygon>
+                                <polygon fill="#FFF" points="540 0 450 150 630 150"></polygon>
+                                <polygon points="900 0 810 150 990 150"></polygon>
+                                <polygon fill="#222" points="0 300 -90 450 90 450"></polygon>
+                                <polygon fill="#FFF" points="0 300 90 150 -90 150"></polygon>
+                                <polygon fill="#FFF" points="180 300 90 450 270 450"></polygon>
+                                <polygon fill="#666" points="180 300 270 150 90 150"></polygon>
+                                <polygon fill="#222" points="360 300 270 450 450 450"></polygon>
+                                <polygon fill="#FFF" points="360 300 450 150 270 150"></polygon>
+                                <polygon fill="#444" points="540 300 450 450 630 450"></polygon>
+                                <polygon fill="#222" points="540 300 630 150 450 150"></polygon>
+                                <polygon fill="#AAA" points="720 300 630 450 810 450"></polygon>
+                                <polygon fill="#666" points="720 300 810 150 630 150"></polygon>
+                                <polygon fill="#FFF" points="900 300 810 450 990 450"></polygon>
+                                <polygon fill="#999" points="900 300 990 150 810 150"></polygon>
+                                <polygon points="0 600 -90 750 90 750"></polygon>
+                                <polygon fill="#666" points="0 600 90 450 -90 450"></polygon>
+                                <polygon fill="#AAA" points="180 600 90 750 270 750"></polygon>
+                                <polygon fill="#444" points="180 600 270 450 90 450"></polygon>
+                                <polygon fill="#444" points="360 600 270 750 450 750"></polygon>
+                                <polygon fill="#999" points="360 600 450 450 270 450"></polygon>
+                                <polygon fill="#666" points="540 600 630 450 450 450"></polygon>
+                                <polygon fill="#222" points="720 600 630 750 810 750"></polygon>
+                                <polygon fill="#FFF" points="900 600 810 750 990 750"></polygon>
+                                <polygon fill="#222" points="900 600 990 450 810 450"></polygon>
+                                <polygon fill="#DDD" points="0 900 90 750 -90 750"></polygon>
+                                <polygon fill="#444" points="180 900 270 750 90 750"></polygon>
+                                <polygon fill="#FFF" points="360 900 450 750 270 750"></polygon>
+                                <polygon fill="#AAA" points="540 900 630 750 450 750"></polygon>
+                                <polygon fill="#FFF" points="720 900 810 750 630 750"></polygon>
+                                <polygon fill="#222" points="900 900 990 750 810 750"></polygon>
+                                <polygon fill="#222" points="1080 300 990 450 1170 450"></polygon>
+                                <polygon fill="#FFF" points="1080 300 1170 150 990 150"></polygon>
+                                <polygon points="1080 600 990 750 1170 750"></polygon>
+                                <polygon fill="#666" points="1080 600 1170 450 990 450"></polygon>
+                                <polygon fill="#DDD" points="1080 900 1170 750 990 750"></polygon>
+                            </g>
+                        </pattern>
+                    </defs>
+                    <rect x="0" y="0" fill="url(#a)" width="100%" height="100%"></rect>
+                    <rect x="0" y="0" fill="url(#b)" width="100%" height="100%"></rect>
+                </svg>
+            </div>
+            <div class="card__avatar">
+                <img src>
 
-                <div class="card__title">a{{ request.user.first_name }} {{request.user.last_name }}</div>
-                <div class="card__subtitle">{{ request.user.email }}</div>
-                <div class="card__subtitle">{{ request.user.contact }}</div>
-                <div class="card__subtitle">{{ request.user.age }}</div>
+            </div>
+            <div class="current_balance_div">
+                <span>Balance : {{bank_details.current_balance}} </span>
 
-                <!-- <div class="card__wrapper">
+            </div>
+            <div class="card__title">{{ profile.username}} </div>
+
+            <div class="card_details_div">
+                <span class="title_span">User Details </span> 
+
+                <div class="card__subtitle">Name &rarr;  {{ profile.first_name }}
+                    {{profile.last_name }}</div>
+                    <div class="card__subtitle">Age &rarr; {{ profile.age }}</div>
+                <div class="card__subtitle">Email &rarr; {{profile.email }}</div>
+                <div class="card__subtitle">Contact no. &rarr;  {{ profile.contact }}</div>
+                
+            </div>
+
+            <div class="card_details_div">
+                <span class="title_span">Bank Details </span> 
+
+                <div class="card__subtitle">Bank name &rarr; {{ bank_details.bank_name }}</div>
+                <div class="card__subtitle">Acc no. &rarr; {{ bank_details.account_number }}</div>
+                <div class="card__subtitle">Routing no. &rarr; {{ bank_details.routing_number }}</div>
+              
+            </div>
+
+            <!-- <div class="card__wrapper">
                     <button class="card__btn">Button</button>
                     <button class="card__btn card__btn-solid">Button</button>
                 </div> -->
+        </div>
+    </div>
+    <div class="container">
+        <h2>Select a Delhi Metro Location</h2>
+        <form method="post" onsubmit="return validateLocations()">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="from">From:</label>
+                <select class="form-control" id="from" name="from">
+                    <option value="choose">Choose</option>
+                    <option value="Rajiv Chowk">Rajiv Chowk</option>
+                    <option value="Chandni Chowk">Chandni Chowk</option>
+                    <option value="Kashmere Gate">Kashmere Gate</option>
+                    <option value="Central Secretariat">Central
+                        Secretariat</option>
+                    <option value="Barakhamba Road">Barakhamba Road</option>
+                    <option value="Pragati Maidan">Pragati Maidan</option>
+                    <option value="Mandi House">Mandi House</option>
+                    <option value="Inderlok">Inderlok</option>
+                    <option value="Rajouri Garden">Rajouri Garden</option>
+                    <option value="Mayur Vihar Phase 1">Mayur Vihar Phase
+                        1</option>
+                    <option value="Botanical Garden">Botanical
+                        Garden</option>
+                    <option value="Laxmi Nagar">Laxmi Nagar</option>
+                    <option value="Akshardham">Akshardham</option>
+                    <option value="Nehru Place">Nehru Place</option>
+                    <option value="Hauz Khas">Hauz Khas</option>
+                    <option value="Malviya Nagar">Malviya Nagar</option>
+                    <option value="Green Park">Green Park</option>
+                    <option value="Saket">Saket</option>
+                    <option value="New Delhi">New Delhi</option>
+                    <option value="Dwarka Sector 21">Dwarka Sector
+                        21</option>
+                    <option value="Vaishali">Vaishali</option>
+                    <option value="Anand Vihar">Anand Vihar</option>
+                    <option value="Dilshad Garden">Dilshad Garden</option>
+                    <option value="Rohini West">Rohini West</option>
+                </select>
             </div>
-        </div>
-        <div class="container">
-            <h2>Select a Delhi Metro Location</h2>
-            <form method="post" onsubmit="return validateLocations()">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="from">From:</label>
-                    <select class="form-control" id="from" name="from">
-                        <option value="choose">Choose</option>
-                        <option value="Rajiv Chowk">Rajiv Chowk</option>
-                        <option value="Chandni Chowk">Chandni Chowk</option>
-                        <option value="Kashmere Gate">Kashmere Gate</option>
-                        <option value="Central Secretariat">Central
-                            Secretariat</option>
-                        <option value="Barakhamba Road">Barakhamba Road</option>
-                        <option value="Pragati Maidan">Pragati Maidan</option>
-                        <option value="Mandi House">Mandi House</option>
-                        <option value="Inderlok">Inderlok</option>
-                        <option value="Rajouri Garden">Rajouri Garden</option>
-                        <option value="Mayur Vihar Phase 1">Mayur Vihar Phase
-                            1</option>
-                        <option value="Botanical Garden">Botanical
-                            Garden</option>
-                        <option value="Laxmi Nagar">Laxmi Nagar</option>
-                        <option value="Akshardham">Akshardham</option>
-                        <option value="Nehru Place">Nehru Place</option>
-                        <option value="Hauz Khas">Hauz Khas</option>
-                        <option value="Malviya Nagar">Malviya Nagar</option>
-                        <option value="Green Park">Green Park</option>
-                        <option value="Saket">Saket</option>
-                        <option value="New Delhi">New Delhi</option>
-                        <option value="Dwarka Sector 21">Dwarka Sector
-                            21</option>
-                        <option value="Vaishali">Vaishali</option>
-                        <option value="Anand Vihar">Anand Vihar</option>
-                        <option value="Dilshad Garden">Dilshad Garden</option>
-                        <option value="Rohini West">Rohini West</option>
-                    </select>
-                </div>
 
-                <div class="form-group">
-                    <label for="to">To:</label>
-                    <select class="form-control" id="to" name="to">
-                        <option value="choose">Choose</option>
-                        <option value="Rajiv Chowk">Rajiv Chowk</option>
-                        <option value="Chandni Chowk">Chandni Chowk</option>
-                        <option value="Kashmere Gate">Kashmere Gate</option>
-                        <option value="Central Secretariat">Central
-                            Secretariat</option>
-                        <option value="Barakhamba Road">Barakhamba Road</option>
-                        <option value="Pragati Maidan">Pragati Maidan</option>
-                        <option value="Mandi House">Mandi House</option>
-                        <option value="Inderlok">Inderlok</option>
-                        <option value="Rajouri Garden">Rajouri Garden</option>
-                        <option value="Mayur Vihar Phase 1">Mayur Vihar Phase
-                            1</option>
-                        <option value="Botanical Garden">Botanical
-                            Garden</option>
-                        <option value="Laxmi Nagar">Laxmi Nagar</option>
-                        <option value="Akshardham">Akshardham</option>
-                        <option value="Nehru Place">Nehru Place</option>
-                        <option value="Hauz Khas">Hauz Khas</option>
-                        <option value="Malviya Nagar">Malviya Nagar</option>
-                        <option value="Green Park">Green Park</option>
-                        <option value="Saket">Saket</option>
-                        <option value="New Delhi">New Delhi</option>
-                        <option value="Dwarka Sector 21">Dwarka Sector
-                            21</option>
-                        <option value="Vaishali">Vaishali</option>
-                        <option value="Anand Vihar">Anand Vihar</option>
-                        <option value="Dilshad Garden">Dilshad Garden</option>
-                        <option value="Rohini West">Rohini West</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn bts">Submit</button>
-            </form>
-        </div>
+            <div class="form-group">
+                <label for="to">To:</label>
+                <select class="form-control" id="to" name="to">
+                    <option value="choose">Choose</option>
+                    <option value="Rajiv Chowk">Rajiv Chowk</option>
+                    <option value="Chandni Chowk">Chandni Chowk</option>
+                    <option value="Kashmere Gate">Kashmere Gate</option>
+                    <option value="Central Secretariat">Central
+                        Secretariat</option>
+                    <option value="Barakhamba Road">Barakhamba Road</option>
+                    <option value="Pragati Maidan">Pragati Maidan</option>
+                    <option value="Mandi House">Mandi House</option>
+                    <option value="Inderlok">Inderlok</option>
+                    <option value="Rajouri Garden">Rajouri Garden</option>
+                    <option value="Mayur Vihar Phase 1">Mayur Vihar Phase
+                        1</option>
+                    <option value="Botanical Garden">Botanical
+                        Garden</option>
+                    <option value="Laxmi Nagar">Laxmi Nagar</option>
+                    <option value="Akshardham">Akshardham</option>
+                    <option value="Nehru Place">Nehru Place</option>
+                    <option value="Hauz Khas">Hauz Khas</option>
+                    <option value="Malviya Nagar">Malviya Nagar</option>
+                    <option value="Green Park">Green Park</option>
+                    <option value="Saket">Saket</option>
+                    <option value="New Delhi">New Delhi</option>
+                    <option value="Dwarka Sector 21">Dwarka Sector
+                        21</option>
+                    <option value="Vaishali">Vaishali</option>
+                    <option value="Anand Vihar">Anand Vihar</option>
+                    <option value="Dilshad Garden">Dilshad Garden</option>
+                    <option value="Rohini West">Rohini West</option>
+                </select>
+            </div>
+            <button type="submit" class="btn bts">Submit</button>
+        </form>
+    </div>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script
-            src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
         function validateLocations() {
             var fromLocation = document.getElementById("from").value;
             var toLocation = document.getElementById("to").value;
@@ -435,5 +414,6 @@
             return true; // Allow form submission
         }
     </script>
-    </body>
+</body>
+
 </html>
