@@ -84,7 +84,7 @@
     {% endif %}
 
 
-<form  class="shadow-lg p-5 rounded" method='POST'>
+<form  class="shadow-lg p-5 rounded" method='POST' action="{% url 'login_page' %}">
 	{% csrf_token %}
 	<h1> Login </h1>
     <hr>

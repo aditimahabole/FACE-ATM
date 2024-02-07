@@ -321,10 +321,10 @@
                         
                 </div>
 
-                <div class="card__title">a{{ profile.first_name }} {{profile.last_name }}</div>
-                <div class="card__subtitle">{{ profile.email }}</div>
-                <div class="card__subtitle">{{ profile.contact }}</div>
-                <div class="card__subtitle">{{ profile.age }}</div>
+                <div class="card__title">a{{ request.user.first_name }} {{request.user.last_name }}</div>
+                <div class="card__subtitle">{{ request.user.email }}</div>
+                <div class="card__subtitle">{{ request.user.contact }}</div>
+                <div class="card__subtitle">{{ request.user.age }}</div>
 
                 <!-- <div class="card__wrapper">
                     <button class="card__btn">Button</button>

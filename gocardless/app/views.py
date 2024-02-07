@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from urllib.parse import urlencode
+from django.contrib.auth.models import User
 import os
 
 from django.shortcuts import get_object_or_404
@@ -28,20 +29,7 @@ from django.shortcuts import get_object_or_404
     # return render(request, 'home.html', {'profile': profile})
     
     
-@login_required(login_url='login_page')
-def home_page(request):
-    print("Inside Home Page")
 
-    profile = None
-    if request.user.is_authenticated:
-        print("yes authenticated")
-        profile = Person.objects.get(email=request.user.email)
-        print("profile is ",profile)
-        profile = get_object_or_404(Person, email=request.user.email)
-        print("Profile : ",profile)
-    
-    
-    return render(request, 'home.html', {'profile': profile})
 # from match_person import match_person
 # --------------------REGISTER PAGE-----------------------------
 
@@ -58,14 +46,9 @@ def register_page(request):
         bank_name = request.POST.get('bank_name')
         account_number = request.POST.get('account_number')
         routing_number = request.POST.get('routing_number')
-
-        # Check if the username already exists
-        username = email  # Assuming email will be used as the username
-        if Person.objects.filter(username=username).exists():
+        if Person.objects.filter(email=email).exists():
             messages.error(request, 'Username already exists!')
             return redirect('register_page')
-
-        # Hash the password
         hashed_password = make_password(password)
 
         # Create the user instance
@@ -73,11 +56,11 @@ def register_page(request):
             first_name=first_name,
             last_name=last_name,
             email=email,
-            username=username,
             password=hashed_password,
             contact=contact,
             age=age
         )
+
 
         # Save the uploaded image
         if image:
@@ -99,6 +82,8 @@ def register_page(request):
         # Save the user and bank details
         user.save()
         bank_details.save()
+        print("User Created : ",user)
+        print("Bank Details : ",bank_details)
 
         messages.success(request, 'Account created successfully!')
         return redirect('login_page')
@@ -107,68 +92,65 @@ def register_page(request):
 
 
 # --------------------LOGIN PAGE-----------------------------
-
+from django.contrib.auth import authenticate
 
 def login_page(request):
-    print('Inside Login page')
-    if request.method == "POST":
-        password = request.POST.get('password')
+    if request.method == 'POST':
+        print('Inside POST method')
         email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = User.objects.filter(email=email).first()
+        print("User:", user)
         
-        user =  Person.objects.filter(email=email).first()
-        
-        if user and check_password(password, user.password):
-            login(request, user)
-            return redirect('home_page')
+        # Authenticate the user
+        hashed_password = make_password(password)
+        authenticated_user = authenticate(request, email=email, password=password)
+        print(authenticated_user)
+        if authenticated_user:
+            print("User authenticated successfully")
+            login(request, authenticated_user)
+            return redirect('home_page')  # Redirect to the home page
         else:
+            print("Invalid email or password")
+            # Handle invalid credentials
             messages.error(request, 'Invalid email or password.')
             return redirect('login_page')
 
+    print("Rendering login page")
     return render(request, 'login.html')
 
 
 
 # def login_page(request):
-#     print('Inside Login page')
-#     if request.method == "POST":
-#         password = request.POST.get('password')
+    
+#     if request.method == 'POST':
+#         print('inside if')
 #         email = request.POST.get('email')
-#         user =  Person.objects.filter(email = email).first()
-#         print("checking in login")
-        
+#         password = request.POST.get('password')
+#         user = Person.objects.filter(email=email).first()
+#         print("User : ",user)
 #         if user and check_password(password, user.password):
-#              login(request, user)
-#              return redirect('home_page')
-
-        
-        
-#     # ------------------------------------------------------
-#     # if request.method == 'POST':
-#     #     email = request.POST.get('email')
-#     #     password = request.POST.get('password')
-#     #     # next_url = request.GET.get('next', '/gocardless/home')
-
-#     #     # Retrieve the user from the database based on the email
-#     #     user = Person.objects.filter(email=email).first()
-
-#     #     # Check if the user exists and if the provided password matches the hashed password
-#     #     if user and check_password(password, user.password):
-#     #         # If the password matches, log in the user
-#     #         login(request, user)
-#     #         # Redirect to a success page.
-#     #         print("Success!")
-#     #         # next_url = request.GET.get('next', 'home_page')
-#     #         # print(next_url)
-#     #         # return redirect(next_url)
-#     #         # redirect_url = 'home_page?' + urlencode({'email': email})
-#     #         # return redirect(redirect_url)
-#     #         return redirect('home_page')
-#     #     else:
-#     #         print("Failure!")
-#     #         # If the password doesn't match or the user doesn't exist, display an error message.
-#     #         messages.error(request, 'Invalid email or password.')
-#     #         return redirect('login_page')
+#             login(request, user)
+#             return redirect('home_page')  # Redirect to the home page
+#         else:
+#             # Handle invalid credentials
+#             messages.error(request, 'Invalid email or password.')
+#             return redirect('login_page')
 
 #     return render(request, 'login.html')
 
+@login_required(login_url='login_page')
+def home_page(request):
+    print('request ',request.user)
+    print("Inside Home Page")
 
+    profile = None
+    if request.user.is_authenticated:
+        print("yes authenticated")
+        profile = Person.objects.get(email=request.user.email)
+        print("profile is ",profile)
+        profile = get_object_or_404(Person, email=request.user.email)
+        print("Profile : ",profile)
+    
+    
+    return render(request, 'home.html')
