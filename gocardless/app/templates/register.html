@@ -135,8 +135,9 @@
             </div>
             <div class="mb-3">
                 <label for="formFile" class="form-label">Upload Photo</label>
-                <input class="form-control" type="file" id="image">
+                <input class="form-control" type="file" id="image" name="image">
             </div>
+            
             <div class="headings_div">
                 <h3>Account Details</h3>
             </div>
@@ -152,12 +153,7 @@
                     placeholder="Enter Account Number">
 
             </div>
-            <div class="form-group">
-                <label for="id_routing_number">Routing Number</label>
-                <input type="number" class="form-control" name="routing_number" id="id_routing_number" required
-                    placeholder="Enter Routing Number">
-
-            </div>
+          
             <p> Already have an account . <a href="{% url 'login_page' %}" >Login</a> </p>
             <button type="submit" class="btn  bts">Register</button>
         </form>

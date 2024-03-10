@@ -4,7 +4,6 @@ import face_recognition
 import csv
 import pandas as pd
 from datetime import datetime
-
 # Load data from known_faces.xlsx file
 def match_person():
     
@@ -60,7 +59,7 @@ def match_person():
 
             # ------ Display the resulting frame --------
             cv2.imshow('Video', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(1) & 0xFF == ord('q'):                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                 break
 
     # Release the capture

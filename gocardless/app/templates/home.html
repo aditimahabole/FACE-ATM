@@ -17,6 +17,12 @@
     --double-db:#7E3937;
 
  }
+ .user_image_size{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+ }
     .card {
         font-family: Roboto;
         --main-color: #000;
@@ -32,6 +38,7 @@
         border-radius: 5px;
         background: var(--bg-color);
         background-color: var(--skin);
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     }
 
     .card__img {
@@ -117,15 +124,18 @@
         font-family: Roboto;
 
         display: flex;
+        
         justify-content: center;
         padding: 20px;
+        
     }
 
     body {
         font-family: Roboto;
         display: flex;
+        flex-direction: column;
         justify-content: center;
-        background-color: rgb(255, 255, 255);
+        
         align-items: center;
 
     }
@@ -166,6 +176,15 @@
         border: 2px solid rgb(255, 158, 106);
 
     }
+    .scan_bt{
+        padding: 20px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        background-color: var(--dark-red);
+        font-weight: 600;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    }
 
     .bts:hover {
 
@@ -184,9 +203,43 @@
         background-color: rgb(255, 158, 106);
 
     }
+    .side_img_div{
+        height: 300px;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+
+    }
+    .img_side{
+        height: 100%;
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    }
+    .inner_div{
+        
+        width: 90%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .button_div{
+        
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .img_svg{
+        height: 200px;
+    }
 </style>
 
 <body>
+    <div class="inner_div">
+
+   
     <div class="profile_div">
         <div class="card">
             <div class="card__img">
@@ -277,9 +330,9 @@
                     <rect x="0" y="0" fill="url(#b)" width="100%" height="100%"></rect>
                 </svg>
             </div>
+            
             <div class="card__avatar">
-                <img src>
-
+                <img id="userImage" src="" alt="User Image" class="user_image_size">
             </div>
             <div class="current_balance_div">
                 <span>Balance : {{bank_details.current_balance}} </span>
@@ -303,117 +356,73 @@
 
                 <div class="card__subtitle">Bank name &rarr; {{ bank_details.bank_name }}</div>
                 <div class="card__subtitle">Acc no. &rarr; {{ bank_details.account_number }}</div>
-                <div class="card__subtitle">Routing no. &rarr; {{ bank_details.routing_number }}</div>
+              
               
             </div>
-
-            <!-- <div class="card__wrapper">
-                    <button class="card__btn">Button</button>
-                    <button class="card__btn card__btn-solid">Button</button>
-                </div> -->
         </div>
     </div>
-    <div class="container">
-        <h2>Select a Delhi Metro Location</h2>
-        <form method="post" onsubmit="return validateLocations()">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="from">From:</label>
-                <select class="form-control" id="from" name="from">
-                    <option value="choose">Choose</option>
-                    <option value="Rajiv Chowk">Rajiv Chowk</option>
-                    <option value="Chandni Chowk">Chandni Chowk</option>
-                    <option value="Kashmere Gate">Kashmere Gate</option>
-                    <option value="Central Secretariat">Central
-                        Secretariat</option>
-                    <option value="Barakhamba Road">Barakhamba Road</option>
-                    <option value="Pragati Maidan">Pragati Maidan</option>
-                    <option value="Mandi House">Mandi House</option>
-                    <option value="Inderlok">Inderlok</option>
-                    <option value="Rajouri Garden">Rajouri Garden</option>
-                    <option value="Mayur Vihar Phase 1">Mayur Vihar Phase
-                        1</option>
-                    <option value="Botanical Garden">Botanical
-                        Garden</option>
-                    <option value="Laxmi Nagar">Laxmi Nagar</option>
-                    <option value="Akshardham">Akshardham</option>
-                    <option value="Nehru Place">Nehru Place</option>
-                    <option value="Hauz Khas">Hauz Khas</option>
-                    <option value="Malviya Nagar">Malviya Nagar</option>
-                    <option value="Green Park">Green Park</option>
-                    <option value="Saket">Saket</option>
-                    <option value="New Delhi">New Delhi</option>
-                    <option value="Dwarka Sector 21">Dwarka Sector
-                        21</option>
-                    <option value="Vaishali">Vaishali</option>
-                    <option value="Anand Vihar">Anand Vihar</option>
-                    <option value="Dilshad Garden">Dilshad Garden</option>
-                    <option value="Rohini West">Rohini West</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="to">To:</label>
-                <select class="form-control" id="to" name="to">
-                    <option value="choose">Choose</option>
-                    <option value="Rajiv Chowk">Rajiv Chowk</option>
-                    <option value="Chandni Chowk">Chandni Chowk</option>
-                    <option value="Kashmere Gate">Kashmere Gate</option>
-                    <option value="Central Secretariat">Central
-                        Secretariat</option>
-                    <option value="Barakhamba Road">Barakhamba Road</option>
-                    <option value="Pragati Maidan">Pragati Maidan</option>
-                    <option value="Mandi House">Mandi House</option>
-                    <option value="Inderlok">Inderlok</option>
-                    <option value="Rajouri Garden">Rajouri Garden</option>
-                    <option value="Mayur Vihar Phase 1">Mayur Vihar Phase
-                        1</option>
-                    <option value="Botanical Garden">Botanical
-                        Garden</option>
-                    <option value="Laxmi Nagar">Laxmi Nagar</option>
-                    <option value="Akshardham">Akshardham</option>
-                    <option value="Nehru Place">Nehru Place</option>
-                    <option value="Hauz Khas">Hauz Khas</option>
-                    <option value="Malviya Nagar">Malviya Nagar</option>
-                    <option value="Green Park">Green Park</option>
-                    <option value="Saket">Saket</option>
-                    <option value="New Delhi">New Delhi</option>
-                    <option value="Dwarka Sector 21">Dwarka Sector
-                        21</option>
-                    <option value="Vaishali">Vaishali</option>
-                    <option value="Anand Vihar">Anand Vihar</option>
-                    <option value="Dilshad Garden">Dilshad Garden</option>
-                    <option value="Rohini West">Rohini West</option>
-                </select>
-            </div>
-            <button type="submit" class="btn bts">Submit</button>
-        </form>
+    <div class="button_div">
+        <img  src="{% static 'scan_img1.svg' %}" class="img_svg"/>
+        <button id="scanButton" class="scan_bt">Scan Face to Withdraw Amount</button>
     </div>
+
+    <div class="side_img_div">
+        <img src="{% static 'bg.jpg' %}" alt="bg" class="img_side">
+    </div>
+</div>
+    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function validateLocations() {
-            var fromLocation = document.getElementById("from").value;
-            var toLocation = document.getElementById("to").value;
-            if (fromLocation === 'Choose') {
-                alert("Please select From location");
-                return false; // Prevent form submission
-            }
-            if (toLocation === 'Choose') {
-                alert("Please select To location");
-                return false; // Prevent form submission
-            }
-
-            if (fromLocation === toLocation) {
-                alert("From and To locations cannot be the same.");
-                return false; // Prevent form submission
-            }
-
-            return true; // Allow form submission
+        // Assuming you have access to user data in JavaScript
+        var userEmail = "{{ profile.email }}";
+        var userPhone =  "{{ profile.contact }}";
+        var userName = "{{ profile.first_name }}";
+    
+        // Construct the image URL dynamically
+        var imageURL;
+        var formats = ["jpg", "jpeg", "png"];
+    
+        // Loop through each format and check if the image exists
+        for (var i = 0; i < formats.length; i++) {
+            imageURL = "{% static '../media/' %}" + userEmail + "_" + userPhone + "_" + userName + "." + formats[i];
+            
+            // Create a new Image object to check if the image exists
+            var img = new Image();
+            img.src = imageURL;
+    
+            // Check if the image exists
+            img.onload = function() {
+                // If the image exists, set the src attribute of the image element
+                document.getElementById("userImage").src = imageURL;
+            };
         }
     </script>
+    <!-- --------------------------------------- -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#scanButton").click(function() {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'match_person' %}", // This will be replaced with the URL defined in your urls.py
+                success: function(response) {
+                    console.log("Recognition started.");
+                    // Optionally, you can handle the response here
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    // Handle errors if needed
+                }
+            });
+        });
+    });
+</script>
+    
+    
 </body>
 
 </html>
