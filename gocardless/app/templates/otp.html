@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FaceFair</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+    :root {
+      --dark-red: #fc726e;
+      --skin: #feb9b7;
+      --dark-brown: #a05b59;
+      --double-db: #7e3937;
+    }
+
+    body {
+      font-family: Roboto;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .main_container {
+      width: 80%;
+    }
+
+    .scan_bt {
+      padding: 20px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      background-color: var(--dark-red);
+      font-weight: 600;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+      width: 40%;
+    }
+
+    .button_div1 {
+      width: 80%;
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    .input_otp_div {
+      width: 80%;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #otp_input {
+      padding: 10px;
+      width: 50%;
+    }
+    .verify_bt{
+      background-color: rgb(77, 115, 255);
+      padding: 12px;
+      color: white;
+      border: none;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  </style>
+
+  <body>
+    <div class="button_div1">
+      <button id="sendEmailOTP" class="scan_bt">Send OTP by Email</button>
+      <button id="sendSMSOTP" class="scan_bt">Send OTP by Phone</button>
+    </div>
+
+    <div class="input_otp_div">
+      <input id="otp_input" type="text" placeholder="Enter OTP" />
+      <button id="verifyOTP" class="verify_bt">Verify OTP</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      // EMAIL OTP
+      $(document).ready(function () {
+        $("#sendEmailOTP").click(function () {
+          var email = "{{ email }}";
+          var phone = "{{ phone }}";
+          console.log("EMAIL ISSS : ", email);
+          $.ajax({
+            url: "{% url 'send_email_otp' %}",
+            data: {
+              email: email,
+              phone: phone,
+            },
+            success: function (response) {
+              alert(response.message);
+            },
+            error: function (xhr, errmsg, err) {
+              alert("Failed to send OTP via email.");
+            },
+          });
+        });
+        // SMS OTP
+        $("#sendSMSOTP").click(function () {
+          var phone= "{{ phone }}";
+          var email = "{{ email }}";
+
+          console.log("PHONE NUMBER: ", phone);
+
+          $.ajax({
+            url: "{% url 'send_sms_otp' %}",
+            data: {
+              phone: phone,
+              email: email,
+            },
+            success: function (response) {
+              alert(response.message);
+            },
+            error: function (xhr, errmsg, err) {
+              alert("Failed to send OTP via SMS.");
+            },
+          });
+        });
+        $("#verifyOTP").click(function () {
+          var enteredOTP = $("#otp_input").val();
+          var email = "{{ email }}";
+          console.log("OTP ENTERED : ", enteredOTP);
+          $.ajax({
+            url: "{% url 'verify_otp' %}",
+            data: {
+              otp: enteredOTP,
+              email: email,
+            },
+            success: function (response) {
+              if (response.status === 'success') {
+                alert(response.message);
+                window.location.href = "{% url 'transaction' %}" + "?email=" + response.email + "&phone=" + response.phone;
+              } else if (response.status === 'error') {
+                alert(response.message);
+                window.location.href = "{% url 'home_page' %}";
+              }
+              else{
+                alert(response.message);
+                window.location.href = "{% url 'otp' %}";
+              }
+            },
+            error: function (xhr, errmsg, err) {
+              alert("Failed to verify OTP.");
+            },
+          });
+        });
+        
+
+        
+
+
+
+      });
+    </script>
+  </body>
+</html>

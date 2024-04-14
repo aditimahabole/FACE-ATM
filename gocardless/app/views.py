@@ -26,47 +26,82 @@ from email.mime.text import MIMEText
 from django.http import JsonResponse
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+import cv2
+import face_recognition
+import numpy as np
+import pandas as pd
+import csv
+from datetime import datetime
+from django.http import JsonResponse
+import time
+
+# ---------------------------FOR OTP---------------------------
+from django.core.exceptions import SuspiciousOperation
+from django.contrib.sessions.backends.db import SessionStore
+
 # --------------------OTP PART------------------------------
+from django.shortcuts import redirect
+from django.urls import reverse
+from urllib.parse import urlencode
+from twilio.rest import Client
+# -------------------------TRANSACTION-------------------------
+def transaction(request):
+    print('inside Transaction')
+    
+    return render(request, 'transaction.html')
+# --------------------------------------------------------------
 def generate_otp():
     # Generate 4-digit OTP
     otp = random.randint(1000, 9999)
     return str(otp)
-    
-def send_email_otp(email, otp):
-    # Email configuration
-    smtp_server = 'your_smtp_server'
-    smtp_port = 587  # Update with your SMTP port
-    email_sender = 'your_email@example.com'
-    email_password = 'your_email_password'
+# -----------------------SEND EMAIL OTP--------------------------
+from email.mime.text import MIMEText
+import smtplib
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+
+def send_email_otp(request):
+    print("INSIDE SEND EMAIL OTP")
+    print("REQUEST IS : ", request)
+    email = request.GET.get('email')
+    phone = request.GET.get('phone')
+    print("To : ",email)
+    if not email:
+        return JsonResponse({'status': 'error', 'message': 'Email not provided'})
+    otp = generate_otp()
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587 
+    email_sender = 'akmbole2002@gmail.com'
+    email_password = 'yhll cxdt sojj qpme'
 
     try:
-        # Validate email
         validate_email(email)
     except ValidationError:
         return JsonResponse({'status': 'error', 'message': 'Invalid email'})
-
-    # Email content
     message = MIMEText(f'Your OTP is: {otp}')
-    message['Subject'] = 'Your OTP'
+    message['Subject'] = 'FACE-ATM : Your OTP'
     message['From'] = email_sender
     message['To'] = email
-
-    # Connect to SMTP server
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()
-    server.login(email_sender, email_password)
-
-    # Send email
-    server.sendmail(email_sender, [email], message.as_string())
-
-    # Close connection
-    server.quit()
-
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(email_sender, email_password)
+        server.sendmail(email_sender, [email], message.as_string())
+        server.quit()
+        
+        request.session['otp'] = otp
+        request.session.save()
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': f'Failed to send email: {str(e)}' , 'email':email,'phone':phone})
     return JsonResponse({'status': 'success', 'message': 'OTP sent to email'})
 
-def send_sms_otp(phone_number, otp):
-    from twilio.rest import Client
-
+# -------------------------SEND SMS OTP--------------------------------
+def send_sms_otp(request):
+    print('inside SMS OTP')
+    email = request.GET.get('email')
+    phone = request.GET.get('phone')
+    otp = generate_otp()
     account_sid = 'AC42e3a4420f46028429657594ba1be6f2'
     auth_token = 'd62635753310687fee21d47da70e468e'
     twilio_number = '8586810062'
@@ -75,16 +110,45 @@ def send_sms_otp(phone_number, otp):
 
     try:
         message = client.messages.create(
-            body=f'Your OTP is: {otp}',
+            body=f'FACE_ATM Your OTP is: {otp}',
             from_=twilio_number,
-            to=phone_number
+            to=phone
         )
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
 
-    return JsonResponse({'status': 'success', 'message': 'OTP sent to phone number'})
+    return JsonResponse({'status': 'success', 'message': 'OTP sent to phone number' , 'email':email,'phone':phone})
+# -----------------------VERIFY OTP--------------------------------------
+from django.contrib.sessions.backends.db import SessionStore
+from django.http import JsonResponse
 
-# ---------------------IMAGE PART---------------------------
+def verify_otp(request):
+    entered_otp = request.GET.get('otp')
+    if entered_otp == "":
+        return JsonResponse({'status': 'empty', 'message': 'Please Enter OTP'})
+        
+    
+    # Retrieve OTP from session
+    session_key = request.session.session_key
+    if not session_key:
+        return JsonResponse({'status': 'error', 'message': 'Session key not found'})
+
+    session = SessionStore(session_key)
+    stored_otp = session.get('otp')
+    if not stored_otp:
+        return JsonResponse({'status': 'error', 'message': 'OTP not found in session'})
+
+    # Verify the entered OTP
+    if entered_otp == stored_otp:
+        # Clear OTP from session after successful verification
+        del session['otp']
+        session.save()
+        return JsonResponse({'status': 'success', 'message': 'OTP verified successfully'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid OTP'})
+
+
+# -------------------------------IMAGE PART------------------------------
 def save_photos_encodings(image_path):
     print('----- Face Fair Save Encodings ------')
 
@@ -125,208 +189,85 @@ def save_photos_encodings(image_path):
 
     df_combined.to_excel(known_faces_file, index=False)
     print(f"Face encodings saved to '{known_faces_file}'")
-
-
+# -----------------------------------MATCH PERSON------------------------
 def match_person(request):
-    print("inside match person")
     df_known_faces = pd.read_excel('known_faces.xlsx')
-    # -------- Extract face encodings and names from the DataFrame ----------
-    known_face_encodings = [np.fromstring(encoding.strip('[]'), dtype=float, sep=' ') 
-                            for encoding in df_known_faces['Face Encoding']]
+    known_face_encodings = [np.fromstring(encoding.strip('[]'), dtype=float, sep=' ') for encoding in df_known_faces['Face Encoding']]
     known_face_names = df_known_faces['Face Name'].tolist()
     users = known_face_names.copy()
-    print("Users : ",users)
-    print("inside match person 1")
-    video_capture = cv2.VideoCapture(0)
-    now = datetime.now()
-    current_date = now.strftime("%Y-%m-%d")
-    csv_file_name = current_date + '_matches.csv'
-    print("inside match person 2")
-    with open(csv_file_name, 'w', newline='') as f:
-        line_writer = csv.writer(f)
+    
+    match_found = False
+    video_capture = None
+    
+    try:
+        video_capture = cv2.VideoCapture(0)
+        now = datetime.now()
+        current_date = now.strftime("%Y-%m-%d")
+        csv_file_name = current_date + '_matches.csv'
+        with open(csv_file_name, 'w', newline='') as f:
+            line_writer = csv.writer(f)
+            while not match_found:
+                print("READING")
+                ret, frame = video_capture.read()
 
-        while True:
-            # --------- Capture frame-by-frame ---------
-            ret, frame = video_capture.read()
+                if not ret:
+                    print("Error: Could not capture frame.")
+                    break
 
-            if not ret:
-                print("Error: Could not capture frame.")
-                break
+                small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+                rgb_small_frame = np.ascontiguousarray(small_frame[:, :, ::-1])
 
-            # -------- Resize frame for faster processing --------
-            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-            rgb_small_frame = np.ascontiguousarray(small_frame[:, :, ::-1])
+                face_locations = face_recognition.face_locations(rgb_small_frame)
+                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-            # -------- Find face locations ----------
-            face_locations = face_recognition.face_locations(rgb_small_frame)
+                if len(face_locations) > 0:
+                    for face_encoding in face_encodings:
+                        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                        name = ""
 
-            # -------- Find face encodings ---------
-            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-
-            # -------- Recognize faces if face locations are found -------
-            if len(face_locations) > 0:
-                for face_encoding in face_encodings:
-                    matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-                    name = ""
-
-                    if True in matches:
-                        first_match_index = matches.index(True)
-                        name = known_face_names[first_match_index]
-                        print("Name: ", name)
-
-                        # ------ Remove recognized user --------
-                        if name in users:
-                            print('User removed:', name)
-                            user_detail = users.remove(name)
-                            current_time = now.strftime("%H-%M-%S")
-                            line_writer.writerow([name, current_time])
-                            print("User is removed lets end")
-                            print(user_detail)
-                            break
-                          
+                        if True in matches:
+                            first_match_index = matches.index(True)
+                            name = known_face_names[first_match_index]
+                            if name in users:
+                                match_found = True
+                                print('User removed:', name)
+                                users.remove(name)
+                                current_time = now.strftime("%H-%M-%S")
+                                line_writer.writerow([name, current_time])
+                                print("User is removed lets end")
+                                break
                             
-                            # End the camera
-                            
+                print("SHOWING")
+                cv2.imshow('Video', frame)
+                key = cv2.waitKey(1)
+                if key & 0xFF == ord('q') or (request.GET.get('action') == 'stop' and match_found):
+                    break
 
-            # ------ Display the resulting frame --------
-            cv2.imshow('Video', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                break
-
-        # Release the capture
-        video_capture.release()
-        cv2.destroyAllWindows()
-
-    print("Recognition ended. Users recorded:", users)
-    return JsonResponse({'status': 'Recognition started.'})
-
-# --------------------REGISTER PAGE-----------------------------
-
-
-# def register_page(request):
-#     if request.method == "POST":
-#         username = request.POST.get('username')
-#         first_name = request.POST.get('first_name')
-#         last_name = request.POST.get('last_name')
-#         email = request.POST.get('email')
-#         contact = request.POST.get('contact')
-#         age = request.POST.get('age')
-#         password = request.POST.get('password')
-#         image = request.FILES.get('image')
-#         bank_name = request.POST.get('bank_name')
-#         account_number = request.POST.get('account_number')
-#         if Person.objects.filter(username=username).exists():
-#             messages.error(request, 'Username already exists!')
-#             return redirect('register_page')
-#         if Person.objects.filter(email=email).exists():
-#             messages.error(request, 'Email already exists!')
-#             return redirect('register_page')
-#         hashed_password = make_password(password)
-
-#         # Create the user instance
-#         user = Person.objects.create(
-#             username=username,
-#             first_name=first_name,
-#             last_name=last_name,
-#             email=email,
-#             password=hashed_password,
-#             contact=contact,
-#             age=age
-#         )
-
-
-#         # Save the uploaded image
-#         if image:
-#             print("image is : ",image)
-#             fs = FileSystemStorage(location=settings.MEDIA_ROOT)
-#             print("fs is : ",fs)
-#             print("file name is : ",image.name)
-#             filename = fs.save(image.name, image)
-#             user.image = fs.url(filename)
-
-#         # Save bank details
-#         bank_details = BankDetails.objects.create(
-#             user=user,
-#             bank_name=bank_name,
-#             account_number=account_number,
-           
-#         )
-
-#         # Save the user and bank details
-#         user.save()
-#         bank_details.save()
-#         print("User Created : ",user)
-#         print("Bank Details : ",bank_details)
-
-#         messages.success(request, 'Account created successfully!')
-#         return redirect('login_page')
-
-#     return render(request, 'register.html')
-
-
-# def register_page(request):
-#     if request.method == "POST":
-#         username = request.POST.get('username')
-#         first_name = request.POST.get('first_name')
-#         last_name = request.POST.get('last_name')
-#         email = request.POST.get('email')
-#         contact = request.POST.get('contact')
-#         age = request.POST.get('age')
-#         password = request.POST.get('password')
-#         image = request.FILES.get('image')
-#         bank_name = request.POST.get('bank_name')
-#         account_number = request.POST.get('account_number')
-
-#         # Check if username or email already exists
-#         if Person.objects.filter(username=username).exists():
-#             messages.error(request, 'Username already exists!')
-#             return redirect('register_page')
-#         if Person.objects.filter(email=email).exists():
-#             messages.error(request, 'Email already exists!')
-#             return redirect('register_page')
-
-#         # Hash the password
-#         hashed_password = make_password(password)
-
-#         # Create the user instance
-#         user = Person.objects.create(
-#             username=username,
-#             first_name=first_name,
-#             last_name=last_name,
-#             email=email,
-#             password=hashed_password,
-#             contact=contact,
-#             age=age
-#         )
-
-#         # Rename and save the uploaded image
-#         if image:
-#             print("saving image")
-#             fs = FileSystemStorage(location=settings.MEDIA_ROOT)
-#             filename = f"{email}_{contact}_{first_name}.{image.name.split('.')[-1]}"
-#             print("filename : ",filename)
-#             fs.save(filename, image)
-#             user.image = fs.url(filename)
-#             print("user image : ", user.image)
-
-#         # Save bank details
-#         bank_details = BankDetails.objects.create(
-#             user=user,
-#             bank_name=bank_name,
-#             account_number=account_number,
-#         )
-
-#         # Save the user and bank details
-#         user.save()
-#         bank_details.save()
-
-#         messages.success(request, 'Account created successfully!')
-#         return redirect('login_page')
-
-#     return render(request, 'register.html')
-
-
-
+        if match_found:
+            print("Recognition ended. User recorded:", name)
+            email, phone = name.split("_")[:2]
+            return JsonResponse({'match_found': True, 'email': email, 'phone': phone})
+        elif not match_found:
+            print("Recognition ended. User not found.")
+            return JsonResponse({'match_found': False})
+    finally:
+        if video_capture is not None:
+            print("----------Video Released---------")
+            video_capture.release()
+            cv2.destroyAllWindows()
+# ------------------------------ OTP-------------------------------------
+def otp(request):
+    print("INSIDE OTP PAGE")
+    email = request.GET.get('email')
+    phone = request.GET.get('phone')
+    context = {
+        'email': email,
+        'phone': phone
+    }
+    print(context)
+    
+    return render(request, 'otp.html',context)
+# ----------------------------REGISTER-------------------------------
 def register_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -401,26 +342,22 @@ def register_page(request):
         return redirect('login_page')
 
     return render(request, 'register.html')
-# --------------------LOGIN PAGE-----------------------------
+# ----------------------------LOGIN PAGE-----------------------------
 from django.contrib.auth import authenticate
-
 def login_page(request):
     print("INSIDE LOGIN")
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = Person.objects.filter(email=email).first()
-        print("User login : ",user)
-        print("email login : ",email)
-        print("password login : ",password)
+        # print("User login : ",user)
+        # print("email login : ",email)
+        # print("password login : ",password)
         if user and check_password(password, user.password):
             user1 = authenticate(request, username=user.username, password=password)
-            # print("user1 : ",user1)
-            # login(request, user)
-            # print(login(request,user))
             request.session['user_email'] = email
             print("YAYAYAYAYAAYAY")
-            # Redirect to the home page
+            
             return redirect('home_page')
         else:
             # Handle invalid credentials
@@ -429,33 +366,7 @@ def login_page(request):
 
     return render(request, 'login.html')
 
-
-
-
-# def login_page(request):
-    
-    if request.method == 'POST':
-        print('inside if')
-        
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        user = Person.objects.filter(email=email).first()
-        print('email : ',email)
-        print('age : ',user.age)
-        print('pasword : ',password)
-        print("User : ",user)
-        if user and check_password(password, user.password):
-            login(request, user)
-            print('You are authenticated buddy !!!!!!!')
-            return redirect('home_page')  # Redirect to the home page
-        else:
-            # Handle invalid credentials
-            messages.error(request, 'Invalid email or password.')
-            return redirect('login_page')
-
-    return render(request, 'login.html')
-
-# @login_required(login_url="login_page")
+# -----------------------------HOMEPAGE------------------------------
 def home_page(request):
     user_email = request.session.get('user_email')
     print("Inside Home Page")
@@ -470,3 +381,4 @@ def home_page(request):
     }
     
     return render(request, 'home.html', context)
+# ---------------------------------------END-------------------------

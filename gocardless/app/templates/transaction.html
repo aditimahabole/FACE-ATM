@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FaceFair</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+    :root {
+      --dark-red: #fc726e;
+      --skin: #feb9b7;
+      --dark-brown: #a05b59;
+      --double-db: #7e3937;
+    }
+
+    body {
+      font-family: Roboto;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .main_container {
+      width: 80%;
+    }
+
+    .scan_bt {
+      padding: 20px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      background-color: var(--dark-red);
+      font-weight: 600;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+      width: 40%;
+    }
+
+    .button_div1 {
+      width: 80%;
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    .input_otp_div {
+      width: 80%;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #otp_input {
+      padding: 10px;
+      width: 50%;
+    }
+  </style>
+
+  <body>
+    <form class="withdraw-form">
+        <input class="withdraw-input" type="number" id="withdrawAmount" placeholder="Enter withdrawal amount">
+        <button class="withdraw-button" id="withdrawButton">Withdraw</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
+  </body>
+</html>
