@@ -15,14 +15,14 @@ class Person(AbstractUser):
         return self.username
     
     def save(self, *args, **kwargs):
-        # Generate username based on email, last 4 digits of contact, and first name
+       
         if not self.username:
-            email_username = self.email.split('@')[0]  # Get string before '@' in email
-            last_four_digits = re.search(r'\d{4}$', self.contact).group()  # Get last 4 digits of contact
-            first_name_slug = slugify(self.first_name)  # Convert first name to a slug
-            # Concatenate the above values to create a unique username
+            email_username = self.email.split('@')[0] 
+            last_four_digits = re.search(r'\d{4}$', self.contact).group()  
+            first_name_slug = slugify(self.first_name) 
+            
             username = f"{email_username}_{last_four_digits}_{first_name_slug}"
-            # Ensure username is unique by appending numbers if necessary
+            
             base_username = username
             counter = 1
             while Person.objects.filter(username=username).exists():
@@ -30,10 +30,9 @@ class Person(AbstractUser):
                 counter += 1
             self.username = username
         
-        # Initialize filename variable
+        
         filename = ''
         
-        # Rename the uploaded image
         if self.image:
             filename = f"{self.email}_{self.contact}_{slugify(self.first_name)}"
             self.image.name = self.image.field.upload_to + filename + os.path.splitext(self.image.name)[1]
@@ -45,7 +44,6 @@ class BankDetails(models.Model):
     account_number = models.CharField(max_length=20)
     bank_name = models.CharField(max_length=100)
     current_balance = models.FloatField(default=100)
-    # Add more fields as needed
 
     def __str__(self):
         return f"Bank details for {self.user.username}"

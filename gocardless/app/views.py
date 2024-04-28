@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password, check_password
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from dotenv import load_dotenv
 # ------------Image recognition ---------------
 import numpy as np
 import cv2
@@ -34,7 +35,7 @@ import csv
 from datetime import datetime
 from django.http import JsonResponse
 import time
-
+load_dotenv()
 # ---------------------------FOR OTP---------------------------
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.sessions.backends.db import SessionStore
@@ -45,10 +46,40 @@ from django.urls import reverse
 from urllib.parse import urlencode
 from twilio.rest import Client
 # -------------------------TRANSACTION-------------------------
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Person, BankDetails
+
 def transaction(request):
-    print('inside Transaction')
-    
+    if request.method == 'POST':
+        withdraw_amount = float(request.POST.get('withdraw_amount'))
+        email = request.session.get('email')
+        phone = request.session.get('phone')
+        try:
+            user = Person.objects.get(email=email)
+        except Person.DoesNotExist:
+            print("USER NOT EXIST")
+            
+            
+            return JsonResponse({'status': 'error', 'message': 'User not found'})
+        try:
+            bank_details = BankDetails.objects.get(user=user)
+        except BankDetails.DoesNotExist:
+            print("NO BANK DETAIL")
+            
+            return JsonResponse({'status': 'error', 'message': 'Bank details not found'})
+        if withdraw_amount > bank_details.current_balance:
+            print("TOO MUCH MONEY")
+            
+            return JsonResponse({'status': 'error', 'message': 'Not enough money in the account'})
+        print("HURRAY")
+        bank_details.current_balance -= withdraw_amount
+        bank_details.save()
+        print(bank_details)
+        
+        return JsonResponse({'status': 'success', 'message': 'Transaction completed successfully'})
     return render(request, 'transaction.html')
+
 # --------------------------------------------------------------
 def generate_otp():
     # Generate 4-digit OTP
@@ -62,22 +93,20 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 
 def send_email_otp(request):
-    print("INSIDE SEND EMAIL OTP")
-    print("REQUEST IS : ", request)
-    email = request.GET.get('email')
-    phone = request.GET.get('phone')
-    print("To : ",email)
+    email = request.session.get('email')
+    phone = request.session.get('phone')
     if not email:
-        return JsonResponse({'status': 'error', 'message': 'Email not provided'})
+        return JsonResponse({'status': 'error', 'message': 'Please Login first.'})
     otp = generate_otp()
-    smtp_server = 'smtp.gmail.com'
-    smtp_port = 587 
-    email_sender = 'akmbole2002@gmail.com'
-    email_password = 'yhll cxdt sojj qpme'
+    smtp_server =  os.getenv('SMTP_SERVER')
+    smtp_port =  os.getenv('SMTP_PORT')
+    email_sender =  os.getenv('EMAIL_SENDER')
+    email_password = os.getenv('EMAIL_PASSWORD')
 
     try:
         validate_email(email)
     except ValidationError:
+        
         return JsonResponse({'status': 'error', 'message': 'Invalid email'})
     message = MIMEText(f'Your OTP is: {otp}')
     message['Subject'] = 'FACE-ATM : Your OTP'
@@ -93,31 +122,47 @@ def send_email_otp(request):
         request.session['otp'] = otp
         request.session.save()
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': f'Failed to send email: {str(e)}' , 'email':email,'phone':phone})
-    return JsonResponse({'status': 'success', 'message': 'OTP sent to email'})
+        
+        return JsonResponse({'status': 'error', 'message': 'Please Login first.'})
+    
+    return JsonResponse({'status': 'success', 'message': 'OTP sent to email','email':email,'phone':phone})
 
 # -------------------------SEND SMS OTP--------------------------------
+from twilio.rest import Client
+import os
+
 def send_sms_otp(request):
     print('inside SMS OTP')
-    email = request.GET.get('email')
-    phone = request.GET.get('phone')
+    email = request.session.get('email')
+    phone = request.session.get('phone')
+  
     otp = generate_otp()
-    account_sid = 'AC42e3a4420f46028429657594ba1be6f2'
-    auth_token = 'd62635753310687fee21d47da70e468e'
-    twilio_number = '8586810062'
+    message_body = f'FACE_ATM Your OTP is: {otp}'
 
-    client = Client(account_sid, auth_token)
-
+    account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+    auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+    twilio_number = os.getenv('TWILIO_PHONE_NUMBER')
+    print('Twilio Phone : ',twilio_number)
+    
     try:
+        request.session['otp'] = otp
+        request.session.save()
+        client = Client(account_sid, auth_token)
+        
+        print('Attempting to send message...')
         message = client.messages.create(
-            body=f'FACE_ATM Your OTP is: {otp}',
-            from_=twilio_number,
-            to=phone
+            body = message_body,
+            from_ =twilio_number,
+            to = phone
         )
+        
+        print("Message sent successfully: ", message.sid)
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
+        print(e)
+        return JsonResponse({'status': 'error', 'message': 'Failed to send OTP.'})
+    
+    return JsonResponse({'status': 'success', 'message': 'OTP sent to phone number', 'email': email, 'phone': phone})
 
-    return JsonResponse({'status': 'success', 'message': 'OTP sent to phone number' , 'email':email,'phone':phone})
 # -----------------------VERIFY OTP--------------------------------------
 from django.contrib.sessions.backends.db import SessionStore
 from django.http import JsonResponse
@@ -125,10 +170,9 @@ from django.http import JsonResponse
 def verify_otp(request):
     entered_otp = request.GET.get('otp')
     if entered_otp == "":
+        
         return JsonResponse({'status': 'empty', 'message': 'Please Enter OTP'})
         
-    
-    # Retrieve OTP from session
     session_key = request.session.session_key
     if not session_key:
         return JsonResponse({'status': 'error', 'message': 'Session key not found'})
@@ -136,23 +180,24 @@ def verify_otp(request):
     session = SessionStore(session_key)
     stored_otp = session.get('otp')
     if not stored_otp:
+        
         return JsonResponse({'status': 'error', 'message': 'OTP not found in session'})
 
-    # Verify the entered OTP
+    
     if entered_otp == stored_otp:
-        # Clear OTP from session after successful verification
         del session['otp']
         session.save()
+        
         return JsonResponse({'status': 'success', 'message': 'OTP verified successfully'})
     else:
+        
         return JsonResponse({'status': 'error', 'message': 'Invalid OTP'})
 
 
 # -------------------------------IMAGE PART------------------------------
 def save_photos_encodings(image_path):
-    print('----- Face Fair Save Encodings ------')
+    
 
-    # Load existing data if any
     known_faces_file = 'known_faces.xlsx'
     known_face_encodings = []
     known_face_names = []
@@ -162,14 +207,14 @@ def save_photos_encodings(image_path):
         known_face_encodings = df_known_faces['Face Encoding'].tolist()
         known_face_names = df_known_faces['Face Name'].tolist()
 
-    # Load image and encode faces
+    
     full_image_path = os.path.join(settings.MEDIA_ROOT, image_path)
-    print("file path is : ", full_image_path)  # Construct full path to the image
+    
     image = face_recognition.load_image_file(full_image_path)
     face_encodings = face_recognition.face_encodings(image)
 
     if len(face_encodings) > 0:
-        # Check if the face encoding already exists
+        
         new_encoding = face_encodings[0]
         if new_encoding not in known_face_encodings:
             known_face_encodings.append(new_encoding)
@@ -180,7 +225,7 @@ def save_photos_encodings(image_path):
     else:
         print("No face found in", image_path)
 
-    # Save updated data
+    
     df_new_faces = pd.DataFrame(data={'Face Name': known_face_names, 'Face Encoding': known_face_encodings})
     if os.path.exists(known_faces_file):
         df_combined = pd.concat([df_known_faces, df_new_faces], ignore_index=True)
@@ -246,6 +291,7 @@ def match_person(request):
         if match_found:
             print("Recognition ended. User recorded:", name)
             email, phone = name.split("_")[:2]
+            
             return JsonResponse({'match_found': True, 'email': email, 'phone': phone})
         elif not match_found:
             print("Recognition ended. User not found.")
@@ -258,8 +304,10 @@ def match_person(request):
 # ------------------------------ OTP-------------------------------------
 def otp(request):
     print("INSIDE OTP PAGE")
-    email = request.GET.get('email')
-    phone = request.GET.get('phone')
+    # email = request.GET.get('email')
+    # phone = request.GET.get('phone')
+    email = request.session.get('email')
+    phone = request.session.get('phone')
     context = {
         'email': email,
         'phone': phone
@@ -280,19 +328,16 @@ def register_page(request):
         image = request.FILES.get('image')
         bank_name = request.POST.get('bank_name')
         account_number = request.POST.get('account_number')
-
-        # Check if username or email already exists
+        
+        
+        
         if Person.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists!')
             return redirect('register_page')
         if Person.objects.filter(email=email).exists():
             messages.error(request, 'Email already exists!')
             return redirect('register_page')
-
-        # Hash the password
         hashed_password = make_password(password)
-
-        # Create the user instance
         user = Person.objects.create(
             username=username,
             first_name=first_name,
@@ -303,21 +348,15 @@ def register_page(request):
             age=age
         )
 
-        # Rename and save the uploaded image in PNG format
+        
         if image:
             print("saving image")
             fs = FileSystemStorage(location=settings.MEDIA_ROOT)
-            filename = f"{email}_{contact}_{first_name}.png"  # Save as PNG format
+            filename = f"{email}_{contact}_{first_name}.png" 
             print("filename : ", filename)
-
-            # Open the uploaded image using Pillow
             img = Image.open(image)
-
-            # Create an in-memory stream to save the image
             image_stream = io.BytesIO()
             img.save(image_stream, format='PNG')  # Convert and save as PNG
-
-            # Save the image to the file system
             fs.save(filename, image_stream)
             user.image = fs.url(filename)
             print("user image : ", user.image)
@@ -327,14 +366,13 @@ def register_page(request):
             save_photos_encodings(filename)
             print("save encodings ENDS")
 
-        # Save bank details
         bank_details = BankDetails.objects.create(
             user=user,
             bank_name=bank_name,
             account_number=account_number,
         )
 
-        # Save the user and bank details
+        
         user.save()
         bank_details.save()
 
@@ -350,17 +388,17 @@ def login_page(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = Person.objects.filter(email=email).first()
-        # print("User login : ",user)
-        # print("email login : ",email)
-        # print("password login : ",password)
+        print('LOGIN CONTACT', user.contact)
+        print('LOGIN EMAIL', user.email)
+        # session created
+        
+        
         if user and check_password(password, user.password):
             user1 = authenticate(request, username=user.username, password=password)
-            request.session['user_email'] = email
-            print("YAYAYAYAYAAYAY")
-            
+            request.session['email'] = user.email
+            request.session['phone'] = user.contact
             return redirect('home_page')
         else:
-            # Handle invalid credentials
             messages.error(request, 'Invalid email or password.')
             return redirect('login_page')
 
@@ -368,7 +406,7 @@ def login_page(request):
 
 # -----------------------------HOMEPAGE------------------------------
 def home_page(request):
-    user_email = request.session.get('user_email')
+    user_email = request.session.get('email')
     print("Inside Home Page")
     print("session user email", user_email)
     user = Person.objects.filter(email=user_email).first()
@@ -377,8 +415,20 @@ def home_page(request):
     bank_details = BankDetails.objects.filter(user=user).first()
     context = {
         'profile': user,
-        'bank_details': bank_details  # Pass bank details to the template
+        'bank_details': bank_details 
     }
     
     return render(request, 'home.html', context)
+# ---------------------------------LOGOUT--------------------------
+def logout(request):
+    # Delete session variables
+    print("SESSION DELEETDDDDDDD")
+    if 'email' in request.session:
+        del request.session['email']
+    if 'phone' in request.session:
+        del request.session['phone']
+    some = request.session.get('email')
+    print('EMAIL ? ', some)
+    print("END")
+    return JsonResponse({'status': 'success', 'message': 'Logged out successfully'})
 # ---------------------------------------END-------------------------

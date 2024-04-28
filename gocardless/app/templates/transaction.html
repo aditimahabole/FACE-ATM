@@ -4,10 +4,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FaceFair</title>
+    <title>Face-ATM</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
     />
   </head>
   <style>
@@ -61,16 +67,146 @@
     #otp_input {
       padding: 10px;
       width: 50%;
+      border-right: none;
+    }
+    #withdrawButton {
+      padding: 10px 20px;
+      background-color: #fc726e;
+      border: none;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      color: white;
+      
+    }
+
+    #withdrawAmount {
+      padding: 10px;
+      
+      border-right: none;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      width: 100%;
+    }
+    #transaction_id {
+      width: 500px;
+      display: flex;
+    }
+ 
+    
+    .body1 {
+      display: flex;
+      flex-direction: column;
+
+      position: relative;
+    }
+    .atm-logo {
+      height: 200px;
+      margin: 10px;
+    }
+    #login_bt {
+      background-color: rgb(54, 106, 236);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    #login_bt:hover {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+        rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+    }
+    #logout {
+      background-color: #fc726e;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      border: none;
+    }
+    #logout:hover {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+        rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
     }
   </style>
 
-  <body>
-    <form class="withdraw-form">
-        <input class="withdraw-input" type="number" id="withdrawAmount" placeholder="Enter withdrawal amount">
-        <button class="withdraw-button" id="withdrawButton">Withdraw</button>
-    </form>
+  <body class="body1">
+    <br /><br />
+    {% if not request.session.email and not request.session.phone %}
+    <a href="{% url 'login_page' %}" id="login_bt">Login</a>
+    {% else %}
+    <button id="logout">Logout</button>
+    {% endif %}
+
+    <div>
+      <img src="{% static 'atm-logo.png' %}" alt="Face-ATM" class="atm-logo" />
+    </div>
+
+    <div class="withdraw-form" id="transaction_id">
+      {% csrf_token %}
+      <input
+        
+        type="number"
+        id="withdrawAmount"
+        placeholder="Enter withdrawal amount"
+      />
+      <button class="withdraw-button" id="withdrawButton">Withdraw</button>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   
+    <script>
+      $("#logout").click(function () {
+        $.ajax({
+          url: "{% url 'logout' %}",
+          success: function (response) {
+            if (response.status === "success") {
+              alert(response.message);
+              window.location.href = "{% url 'login_page' %}";
+            }
+          },
+          error: function (xhr, errmsg, err) {},
+        });
+      });
+      $("#withdrawButton").click(function () {
+        var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+        // Get the value of the withdrawal amount input field
+        var withdrawAmount = $("#withdrawAmount").val();
+        if(withdrawAmount === ""){
+          alert("Please enter some amount");
+          return
+        }
+
+        // Get the email and phone from URL parameters
+
+        console.log("hahahahha");
+
+        // Make the AJAX request with the withdrawal amount data
+        $.ajax({
+          url: "{% url 'transaction' %}",
+          method: "POST", // Assuming you're using POST method for sending data
+          headers: { "X-CSRFToken": csrftoken },
+          data: {
+            // Send the withdrawal amount as data
+            withdraw_amount: withdrawAmount,
+          },
+          success: function (response) {
+            if (response.status === "success") {
+              alert(response.message);
+              window.location.href = "{% url 'home_page' %}";
+            } else if (response.status === "error") {
+              alert(response.message);
+            }
+          },
+
+          error: function (xhr, errmsg, err) {
+            alert("Please Enter OTP");
+          },
+        });
+      });
+    </script>
   </body>
 </html>

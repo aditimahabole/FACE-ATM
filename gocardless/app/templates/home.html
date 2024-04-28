@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FaceFair</title>
+    <title>Face-ATM</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -129,6 +129,7 @@
       justify-content: center;
 
       align-items: center;
+      position: relative;
     }
 
     .main_container {
@@ -219,9 +220,40 @@
     .button_div1 {
       background-color: #fff;
     }
+    .atm-logo {
+      height: 200px;
+    }
+    #logout {
+      background-color: rgb(242, 103, 103);
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+      color: white;
+      position: absolute;
+      top: 0px;
+      right: 20px;
+      border: none;
+    }
+    #logout:hover {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    }
+    .login_bt {
+      background-color: rgb(54, 106, 236);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+    }
   </style>
 
   <body>
+    {% if not request.session.email and not request.session.phone %}
+    <a href="{% url 'login_page' %}" id="login_bt">Login</a>
+    {% else %}
+    <button id="logout">Logout</button>
+    {% endif %}
+
     <div class="inner_div">
       <div class="profile_div">
         <div class="card">
@@ -505,7 +537,6 @@
             </svg>
           </div>
 
-
           <div class="card__avatar">
             <img
               id="userImage"
@@ -518,7 +549,7 @@
           <div class="current_balance_div">
             <span>Balance : {{bank_details.current_balance}} </span>
           </div>
-          
+
           <div class="card__title">{{ profile.username}}</div>
 
           <div class="card_details_div">
@@ -546,7 +577,15 @@
           </div>
         </div>
       </div>
+
       <div class="button_div">
+        <div>
+          <img
+            src="{% static 'atm-logo.png' %}"
+            alt="Face-ATM"
+            class="atm-logo"
+          />
+        </div>
         <img src="{% static 'scan_img1.svg' %}" class="img_svg" />
         <button id="scanButton" class="scan_bt">
           Scan Face to Withdraw Amount
@@ -557,14 +596,7 @@
         <img src="{% static 'bg.jpg' %}" alt="bg" class="img_side" />
       </div>
     </div>
-
-    <!-- <div class="button_div1" style="display: none">
-      <button id="sendEmailOTP" class="scan_bt">Send OTP by Email</button>
-      <button id="sendPhoneOTP" class="scan_bt">Send OTP by Phone</button>
-    </div> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -575,7 +607,6 @@
       var imageURL;
       var formats = ["jpg", "jpeg", "png"];
       for (var i = 0; i < formats.length; i++) {
-
         imageURL =
           "{% static '../media/' %}" +
           userEmail +
@@ -607,17 +638,32 @@
               // Check if the recognition was successful
               if (response.match_found) {
                 // Redirect to the OTP page with email and phone parameters
-                window.location.href = "{% url 'otp' %}" + "?email=" + response.email + "&phone=" + response.phone;
+                window.location.href = "{% url 'otp' %}";
               }
             },
             error: function (xhr, status, error) {
-              alert('User Not Found')
+              alert("User Not Found");
               console.error("Error:", error);
             },
           });
         });
       });
+
+      $("#logout").click(function () {
+        $.ajax({
+          url: "{% url 'logout' %}",
+          success: function (response) {
+            if (response.status === "success") {
+              alert(response.message);
+              window.location.href = "{% url 'login_page' %}";
+            }
+          },
+          error: function (xhr, errmsg, err) {},
+        });
+      });
+
+
+      
     </script>
-    
   </body>
 </html>

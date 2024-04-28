@@ -14,6 +14,7 @@ urlpatterns = [
     path('send_sms_otp/', views.send_sms_otp, name='send_sms_otp'),
     path('verify_otp/', views.verify_otp, name='verify_otp'),
     path('transaction/', views.transaction, name='transaction'),
+    path('logout/', views.logout, name='logout'),
     
     
     
